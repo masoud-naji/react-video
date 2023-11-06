@@ -1,9 +1,6 @@
 # React Image Accordion
 
-A simple and customizable React component that creates an image accordion with smooth animation, inspired by Kevin Powell's tutorial on [YouTube](https://www.youtube.com/watch?v=WJERnXiFFug&t=0s&ab_channel=KevinPowell).
-
-The image accordion is a modern design pattern that can be used to display images and accompanying information in an interactive and engaging way. This component makes it easy to incorporate this pattern into your React projects.
-
+The video-caption-component npm package is a powerful tool for seamlessly integrating caption support into your web-based video components. With this package, you can effortlessly add subtitles to your videos in three popular formats: SubRip (.srt), SubViewer (.sbv), and WebVTT (.vtt). This versatile solution simplifies the process of creating accessible and inclusive video content for your web applications.
 
 ## Installation
 
