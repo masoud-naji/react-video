@@ -1,0 +1,83 @@
+@import '../../base/scss/colors';
+
+.workfrontform {
+  max-width: 545px;
+  margin: 0 auto;
+}
+.cmp-helpcenter {
+  &__form-title {
+    font-size: 120px;
+    font-weight: 600;
+    line-height: 132px;
+    letter-spacing: -0.015em;
+    text-align: left;
+    white-space: nowrap;
+    margin-bottom: 4rem;
+    @media (max-width: 768px) {
+      font-size: 68px;
+    }
+  }
+  &__form-heading {
+    font-size: 16px;
+    font-weight: 400;
+    color: $black;
+  }
+  &__form-content {
+    > .formGroup {
+      margin-bottom: 30px;
+      .sub_dis {
+        font-size: 0.8rem;
+        font-style: italic;
+      }
+    }
+  }
+}
+.cmp-form-options {
+  margin-bottom: 30px;
+  &__field-label {
+    width: 100%;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &--radio {
+    display: flex;
+    gap:1rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin-right: 10px;
+  }
+}
+.cmp-helpcenter__form-heading {
+  margin: 0 0 50px;
+  &--text {
+    margin: 0 0 15px;
+  }
+}
+
+.errorMessage {
+  color: $core-red;
+  font-size: 14px;
+}
+
+.cmp-form-text input,
+.cmp-form-text textarea {
+  border-radius: 8px;
+  border: 1px solid #CCCCCC;
+  padding-left: 10px;
+  height: 2rem;
+  width: 100%;
+  &:hover {
+    border-color: #727272;
+  }
+}
+.cmp-form-text textarea {
+  padding: 10px;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .cmp-form-text input{
+    width: 100%;
+  }
+}

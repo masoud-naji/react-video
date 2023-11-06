@@ -1,0 +1,74 @@
+{
+  "name": "react-video-all-caption",
+  "version": "1.0.0",
+  "description": "react video player with ability to play all caption format srt, sbv , vtt",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "build-lib": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:masoud-naji/react-video"
+  },
+  "keywords": [
+    "react",
+    "video Caption",
+    "react-video Caption",
+    "video Caption-component",
+    "video Caption-component",
+    "react-video Caption",
+    "video Caption-component",
+    "srt",
+    "vtt",
+    "sbv",
+    "srt Caption",
+    "vtt Caption",
+    "sbv Caption",
+    "srt Subtitle",
+    "vtt Subtitle",
+    "sbv Subtitle"
+
+  ],
+  "author": "Masoud Naji",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/masoud-naji/react-video"
+  },
+  "homepage": "https://github.com/masoud-naji/react-video",
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-react": "^7.18.6",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@storybook/addon-actions": "^7.0.7",
+    "@storybook/addon-essentials": "^7.0.7",
+    "@storybook/addon-interactions": "^7.0.7",
+    "@storybook/addon-links": "^7.0.7",
+    "@storybook/addon-mdx-gfm": "^7.0.7",
+    "@storybook/react": "^7.0.7",
+    "@storybook/react-webpack5": "^7.0.7",
+    "@storybook/testing-library": "^0.1.0",
+    "babel-loader": "^8.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^2.79.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^3.1.8",
+    "storybook": "^7.0.7"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "react-video-caption": "^1.0.8",
+    "rollup-plugin-local-resolve": "^1.0.7",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
