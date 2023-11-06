@@ -1,1 +1,226 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react");function t(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var n=t(e);function l(e){for(var t="",n=e.split(/\n/);n.length>3;){for(var l=3;l<n.length;l++)n[2]+="\n"+n[l];n.splice(3,n.length-3)}var r=0;if(!n[0].match(/\d+:\d+:\d+/)&&n[1].match(/\d+:\d+:\d+/)&&(t+=n[0].match(/\w+/)+"\n",r+=1),!n[r].match(/\d+:\d+:\d+/))return"";var a=n[1].match(/(\d+):(\d+):(\d+)(?:,(\d+))?\s*--?>\s*(\d+):(\d+):(\d+)(?:,(\d+))?/);return a?(t+=a[1]+":"+a[2]+":"+a[3]+"."+a[4]+" --\x3e "+a[5]+":"+a[6]+":"+a[7]+"."+a[8]+"\n",n[r+=1]&&(t+=n[r]+"\n\n"),t):""}function r(e){for(var t="",n=e.split(/\n/);n.length>3;){for(var l=3;l<n.length;l++)n[2]+="\n"+n[l];n.splice(3,n.length-3)}var r=0;if(!n[r].match(/\d+:\d+.\d+,\d+:\d+.\d+/))return"";var a=n[0].match(/(\d+:\d+:\d+.\d+),(\d+:\d+:\d+.\d+)/);return a?(t+=a[1]+" --\x3e "+a[2]+"\n",n[r+=1]&&(t+=n[r]+"\n\n"),t):""}const a=({videopath:t,autoplay:a,captionurl:c,embedurl:d,loop:o,muted:s,playPause:i,type:u,control:p})=>{const f=e.useRef(null),[h,m]=e.useState(!0);return console.log(c),e.useEffect((()=>{const e=f.current;if(e){if(e.addEventListener("play",(()=>{m(!1)})),e.addEventListener("pause",(()=>{m(!0)})),c&&c.toLowerCase().endsWith(".srt"))fetch(c).then((e=>e.text())).then((t=>{const n=function(e){var t=e.replace(/\r+/g,""),n=(t=t.replace(/^\s+|\s+$/g,"")).split("\n\n"),r="";if(n.length>0){r+="WEBVTT\n\n";for(var a=0;a<n.length;a++)r+=l(n[a])}return r}(t),r=new Blob([n],{type:"text/vtt"}),a=URL.createObjectURL(r);console.log("from srt",a);const c=document.createElement("track");c.kind="subtitles",c.label="English",c.srclang="en",c.src=a,e.appendChild(c)}));else if(c&&c.toLowerCase().endsWith(".sbv"))fetch(c).then((e=>e.text())).then((t=>{const n=function(e){var t=e.replace(/\r+/g,""),n=(t=t.replace(/^\s+|\s+$/g,"")).split("\n\n"),l="";if(n.length>0){l+="WEBVTT\n\n";for(var a=0;a<n.length;a++)l+=a+1+"\n",l+=r(n[a])}return l}(t),l=new Blob([n],{type:"text/vtt"}),a=URL.createObjectURL(l);console.log(a);const c=document.createElement("track");c.kind="subtitles",c.label="English",c.srclang="en",c.src=a,e.appendChild(c)}));else if(c&&c.toLowerCase().endsWith(".vtt")){const t=document.createElement("track");t.kind="subtitles",t.label="English",t.srclang="en",t.src=c,e.appendChild(t)}a&&e.play()}}),[t,a,c]),n.default.createElement("div",null,"Video Player here",n.default.createElement("br",null),u,"videoPath"===u?n.default.createElement("div",null,n.default.createElement("video",{ref:f,className:"video-js vjs-default-skin",style:{width:"100%",height:"100%"},controls:p,loop:o,muted:s,playsInline:!0,autoPlay:a,disablePictureInPicture:!0},n.default.createElement("source",{src:t,type:"video/mp4"}),n.default.createElement("source",{src:t,type:"video/webm"}),n.default.createElement("source",{src:t,type:"video/ogg"})),a&&o&&i&&!p&&n.default.createElement("div",{className:"cmp-video__autoplay-control"},n.default.createElement("button",{onClick:()=>h?f.current.play():f.current.pause(),className:`icon icon--${a?"pause":"play"}-button-white autoplay-control`,"aria-label":"click to pause video"}))):"thirdPartyEmbed"===u?n.default.createElement("div",{dangerouslySetInnerHTML:{__html:d}}):null,"End of video player")};exports.ReactVideoPlayer=e=>n.default.createElement(a,e);
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var React = require('react');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+
+// Utility function to convert SRT caption to WebVTT format
+function convertSrtToVtt(srtText) {
+  // Remove DOS newlines
+  var srt = srtText.replace(/\r+/g, '');
+  // Trim whitespace at the start and end
+  srt = srt.replace(/^\s+|\s+$/g, '');
+  // Get cues
+  var cuelist = srt.split('\n\n');
+  var result = "";
+  if (cuelist.length > 0) {
+    result += "WEBVTT\n\n";
+    for (var i = 0; i < cuelist.length; i++) {
+      result += convertSrtCue(cuelist[i]);
+    }
+  }
+  return result;
+}
+
+// Utility function to convert a single SRT caption cue to WebVTT format
+function convertSrtCue(caption) {
+  // Remove all HTML tags for security reasons
+  // caption = caption.replace(/<[a-zA-Z\/][^>]*>/g, '');
+  var cue = "";
+  var s = caption.split(/\n/);
+  // Concatenate multi-line string separated in the array into one
+  while (s.length > 3) {
+    for (var i = 3; i < s.length; i++) {
+      s[2] += "\n" + s[i];
+    }
+    s.splice(3, s.length - 3);
+  }
+  var line = 0;
+  // Detect identifier
+  if (!s[0].match(/\d+:\d+:\d+/) && s[1].match(/\d+:\d+:\d+/)) {
+    cue += s[0].match(/\w+/) + "\n";
+    line += 1;
+  }
+  // Get time strings
+  if (s[line].match(/\d+:\d+:\d+/)) {
+    // Convert time string
+    var m = s[1].match(/(\d+):(\d+):(\d+)(?:,(\d+))?\s*--?>\s*(\d+):(\d+):(\d+)(?:,(\d+))?/);
+    if (m) {
+      cue += m[1] + ":" + m[2] + ":" + m[3] + "." + m[4] + " --> " + m[5] + ":" + m[6] + ":" + m[7] + "." + m[8] + "\n";
+      line += 1;
+    } else {
+      // Unrecognized timestring
+      return "";
+    }
+  } else {
+    // File format error or comment lines
+    return "";
+  }
+  // Get cue text
+  if (s[line]) {
+    cue += s[line] + "\n\n";
+  }
+  return cue;
+}
+
+// Utility function to convert SBV caption to WebVTT format
+function convertSbvToVtt(sbvText) {
+  // Remove DOS newlines
+  var sbv = sbvText.replace(/\r+/g, '');
+  // Trim whitespace at the start and end
+  sbv = sbv.replace(/^\s+|\s+$/g, '');
+  // Get cues
+  var cuelist = sbv.split('\n\n');
+  var result = "";
+  if (cuelist.length > 0) {
+    result += "WEBVTT\n\n";
+    for (var i = 0; i < cuelist.length; i++) {
+      result += i + 1 + "\n"; // Add cue number
+      result += convertSbvCue(cuelist[i]);
+    }
+  }
+  return result;
+}
+
+// Utility function to convert a single SBV caption cue to WebVTT format
+function convertSbvCue(caption) {
+  var cue = "";
+  var s = caption.split(/\n/);
+  // Concatenate multi-line string separated in the array into one
+  while (s.length > 3) {
+    for (var i = 3; i < s.length; i++) {
+      s[2] += "\n" + s[i];
+    }
+    s.splice(3, s.length - 3);
+  }
+  var line = 0;
+  // Get time strings
+  if (s[line].match(/\d+:\d+.\d+,\d+:\d+.\d+/)) {
+    // Convert time string (SBV format) to WebVTT format
+    var m = s[0].match(/(\d+:\d+:\d+.\d+),(\d+:\d+:\d+.\d+)/);
+    if (m) {
+      var startTime = m[1];
+      var endTime = m[2];
+      cue += startTime + " --> " + endTime + "\n";
+      line += 1;
+    } else {
+      // Unrecognized timestring
+      return "";
+    }
+  } else {
+    // File format error or comment lines
+    return "";
+  }
+  // Get cue text
+  if (s[line]) {
+    cue += s[line] + "\n\n";
+  }
+  return cue;
+}
+
+const VideoPlayer = ({
+  videopath,
+  autoplay,
+  captionurl,
+  embedurl,
+  loop,
+  muted,
+  playPause,
+  type,
+  control
+}) => {
+  const videoRef = React.useRef(null);
+  const [videoPaused, setVideoPaused] = React.useState(true);
+  React.useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+    const handlePlay = () => setVideoPaused(false);
+    const handlePause = () => setVideoPaused(true);
+    videoElement.addEventListener("play", handlePlay);
+    videoElement.addEventListener("pause", handlePause);
+    if (autoplay) videoElement.play();
+    if (captionurl) {
+      const fileExtension = captionurl.toLowerCase().split(".").pop();
+      switch (fileExtension) {
+        case "srt":
+        case "sbv":
+          convertAndAddSubtitle(captionurl, fileExtension, videoElement);
+          break;
+        case "vtt":
+          addSubtitleTrack(captionurl, videoElement);
+          break;
+        default:
+          console.error("Unsupported subtitle format");
+      }
+    }
+    return () => {
+      videoElement.removeEventListener("play", handlePlay);
+      videoElement.removeEventListener("pause", handlePause);
+    };
+  }, [autoplay, captionurl, videopath]);
+  const convertAndAddSubtitle = (url, format, videoElement) => {
+    fetch(url).then(response => response.text()).then(text => {
+      const vttText = format === "srt" ? convertSrtToVtt(text) : convertSbvToVtt(text);
+      addSubtitleTrack(URL.createObjectURL(new Blob([vttText])), videoElement);
+    });
+  };
+  const addSubtitleTrack = (src, videoElement) => {
+    const trackElement = document.createElement("track");
+    trackElement.kind = "subtitles";
+    trackElement.label = "English";
+    trackElement.srclang = "en";
+    trackElement.src = src;
+    videoElement.appendChild(trackElement);
+  };
+  const VideoContent = () => {
+    switch (type) {
+      case "videoPath":
+        return /*#__PURE__*/React__default["default"].createElement("video", {
+          ref: videoRef,
+          className: "video-js vjs-default-skin",
+          style: {
+            width: "100%",
+            height: "100%"
+          },
+          controls: control,
+          loop: loop,
+          muted: muted,
+          playsInline: true,
+          autoPlay: autoplay,
+          disablePictureInPicture: true
+        }, /*#__PURE__*/React__default["default"].createElement("source", {
+          src: videopath,
+          type: "video/mp4"
+        }), /*#__PURE__*/React__default["default"].createElement("source", {
+          src: videopath,
+          type: "video/webm"
+        }), /*#__PURE__*/React__default["default"].createElement("source", {
+          src: videopath,
+          type: "video/ogg"
+        }));
+      case "thirdPartyEmbed":
+        return /*#__PURE__*/React__default["default"].createElement("div", {
+          dangerouslySetInnerHTML: {
+            __html: embedurl
+          }
+        });
+      default:
+        return null;
+    }
+  };
+  return /*#__PURE__*/React__default["default"].createElement("div", null, VideoContent(), autoplay && loop && playPause && !control && /*#__PURE__*/React__default["default"].createElement("button", {
+    onClick: () => videoPaused ? videoRef.current.play() : videoRef.current.pause(),
+    className: `icon icon--${videoPaused ? "play" : "pause"}-button-white autoplay-control`,
+    "aria-label": videoPaused ? "click to play video" : "click to pause video"
+  }));
+};
+
+const ReactVideoPlayer = prop => {
+  return /*#__PURE__*/React__default["default"].createElement(VideoPlayer, prop);
+};
+
+exports.ReactVideoPlayer = ReactVideoPlayer;

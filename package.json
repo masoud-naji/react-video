@@ -1,6 +1,6 @@
 {
   "name": "react-video-all-caption",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "react video player with ability to play all caption format srt, sbv , vtt",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -19,9 +19,10 @@
     "video Caption",
     "react-video Caption",
     "video Caption-component",
-    "video Caption-component",
+    "video Caption-srt",
+    "video Caption-sbv",
     "react-video Caption",
-    "video Caption-component",
+    "video hml",
     "srt",
     "vtt",
     "sbv",
@@ -30,8 +31,32 @@
     "sbv Caption",
     "srt Subtitle",
     "vtt Subtitle",
-    "sbv Subtitle"
-
+    "sbv Subtitle",
+    "html srt Subtitle",
+    "html vtt Subtitle",
+    "html sbv Subtitle",
+    "react",
+    "react video caption",
+    "video caption",
+    "caption component",
+    "caption srt",
+    "caption sbv",
+    "caption vtt",
+    "react srt",
+    "react vtt",
+    "react sbv",
+    "srt parser",
+    "vtt parser",
+    "sbv parser",
+    "html5 captions",
+    "video subtitle",
+    "react subtitle component",
+    "subtitle srt",
+    "subtitle vtt",
+    "subtitle sbv",
+    "srt to vtt",
+    "sbv to vtt",
+    "captioning library"
   ],
   "author": "Masoud Naji",
   "license": "MIT",
@@ -67,7 +92,6 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "react-video-caption": "^1.0.8",
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-plugin-terser": "^7.0.2"
   }

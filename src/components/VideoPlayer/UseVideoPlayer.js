@@ -15,81 +15,66 @@ const VideoPlayer = ({
   const videoRef = useRef(null);
   const [videoPaused, setVideoPaused] = useState(true);
 
-
-  console.log(captionurl);
-
   useEffect(() => {
     const videoElement = videoRef.current;
 
-    if (videoElement) {
-      videoElement.addEventListener("play", () => {
-        setVideoPaused(false);
-      });
+    if (!videoElement) return;
 
-      videoElement.addEventListener("pause", () => {
-        setVideoPaused(true);
-      });
+    const handlePlay = () => setVideoPaused(false);
+    const handlePause = () => setVideoPaused(true);
 
-      // Fetch and convert subtitles if needed
-      if (captionurl && captionurl.toLowerCase().endsWith(".srt")) {
-        fetch(captionurl)
-          .then((response) => response.text())
-          .then((srtText) => {
-            // Convert SRT to VTT using your conversion logic
-            const vttText = convertSrtToVtt(srtText);
-            const vttBlob = new Blob([vttText], { type: "text/vtt" });
-            const vttURL = URL.createObjectURL(vttBlob);
+    videoElement.addEventListener("play", handlePlay);
+    videoElement.addEventListener("pause", handlePause);
 
-            console.log("from srt", vttURL);
-            // Add the VTT file as a subtitle track
-            const trackElement = document.createElement("track");
-            trackElement.kind = "subtitles";
-            trackElement.label = "English";
-            trackElement.srclang = "en";
-            trackElement.src = vttURL;
-            videoElement.appendChild(trackElement);
-          });
-      } else if (captionurl && captionurl.toLowerCase().endsWith(".sbv")) {
-        fetch(captionurl)
-          .then((response) => response.text())
-          .then((sbvText) => {
-            // Convert SRT to VTT using your conversion logic
-            const vttText = convertSbvToVtt(sbvText);
-            const vttBlob = new Blob([vttText], { type: "text/vtt" });
-            const vttURL = URL.createObjectURL(vttBlob);
+    if (autoplay) videoElement.play();
 
-            console.log(vttURL);
-            // Add the VTT file as a subtitle track
-            const trackElement = document.createElement("track");
-            trackElement.kind = "subtitles";
-            trackElement.label = "English";
-            trackElement.srclang = "en";
-            trackElement.src = vttURL;
-            videoElement.appendChild(trackElement);
-          });
-      } else if (captionurl && captionurl.toLowerCase().endsWith(".vtt")) {
-        const trackElement = document.createElement("track");
-        trackElement.kind = "subtitles";
-        trackElement.label = "English";
-        trackElement.srclang = "en";
-        trackElement.src = captionurl;
-        videoElement.appendChild(trackElement);
-      }
-
-      // Play the video (if autoplay is true)
-      if (autoplay) {
-        videoElement.play();
+    if (captionurl) {
+      const fileExtension = captionurl.toLowerCase().split(".").pop();
+      switch (fileExtension) {
+        case "srt":
+        case "sbv":
+          convertAndAddSubtitle(captionurl, fileExtension, videoElement);
+          break;
+        case "vtt":
+          addSubtitleTrack(captionurl, videoElement);
+          break;
+        default:
+          console.error("Unsupported subtitle format");
       }
     }
-  }, [videopath, autoplay, captionurl]);
 
-  return (
-    <div>
-      Video Player here
-      <br />
-      {type}
-      {type === "videoPath" ? (
-        <div>
+    return () => {
+      videoElement.removeEventListener("play", handlePlay);
+      videoElement.removeEventListener("pause", handlePause);
+    };
+  }, [autoplay, captionurl, videopath]);
+
+  const convertAndAddSubtitle = (url, format, videoElement) => {
+    fetch(url)
+      .then((response) => response.text())
+      .then((text) => {
+        const vttText =
+          format === "srt" ? convertSrtToVtt(text) : convertSbvToVtt(text);
+        addSubtitleTrack(
+          URL.createObjectURL(new Blob([vttText])),
+          videoElement
+        );
+      });
+  };
+
+  const addSubtitleTrack = (src, videoElement) => {
+    const trackElement = document.createElement("track");
+    trackElement.kind = "subtitles";
+    trackElement.label = "English";
+    trackElement.srclang = "en";
+    trackElement.src = src;
+    videoElement.appendChild(trackElement);
+  };
+
+  const VideoContent = () => {
+    switch (type) {
+      case "videoPath":
+        return (
           <video
             ref={videoRef}
             className="video-js vjs-default-skin"
@@ -104,27 +89,32 @@ const VideoPlayer = ({
             <source src={videopath} type="video/mp4" />
             <source src={videopath} type="video/webm" />
             <source src={videopath} type="video/ogg" />
+            {/* ... potentially other sources */}
           </video>
-          {autoplay && loop && playPause && !control && (
-            <div className="cmp-video__autoplay-control">
-              <button
-                onClick={() =>
-                  videoPaused
-                    ? videoRef.current.play()
-                    : videoRef.current.pause()
-                }
-                className={`icon icon--${
-                  autoplay ? "pause" : "play"
-                }-button-white autoplay-control`}
-                aria-label="click to pause video"
-              ></button>
-            </div>
-          )}
-        </div>
-      ) : type === "thirdPartyEmbed" ? (
-        <div dangerouslySetInnerHTML={{ __html: embedurl }} />
-      ) : null}
-      End of video player
+        );
+      case "thirdPartyEmbed":
+        return <div dangerouslySetInnerHTML={{ __html: embedurl }} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div>
+      {VideoContent()}
+      {autoplay && loop && playPause && !control && (
+        <button
+          onClick={() =>
+            videoPaused ? videoRef.current.play() : videoRef.current.pause()
+          }
+          className={`icon icon--${
+            videoPaused ? "play" : "pause"
+          }-button-white autoplay-control`}
+          aria-label={
+            videoPaused ? "click to play video" : "click to pause video"
+          }
+        />
+      )}
     </div>
   );
 };
