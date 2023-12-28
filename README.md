@@ -1,4 +1,4 @@
-# React Image Accordion
+# react-video-all-caption
 
 The video-caption-component npm package is a powerful tool for seamlessly integrating caption support into your web-based video components. With this package, you can effortlessly add subtitles to your videos in three popular formats: SubRip (.srt), SubViewer (.sbv), and WebVTT (.vtt). This versatile solution simplifies the process of creating accessible and inclusive video content for your web applications.
 
